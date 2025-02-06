@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { UrlModule } from './url/url.module';
+import { UrlAccessModule } from './url-access/url-access.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UrlModule } from './url/url.module';
     UserModule,
     AuthModule,
     UrlModule,
+    UrlAccessModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,0 +1,29 @@
+
+# GET http://localhost:3000/url-access
+
+
+# GET http://localhost:3000/url-access/1
+
+# POST  http://localhost:3000/url-access
+# Content-Type: application/json
+
+# {
+#   "accessDate": "01-01-1999",
+#   "ip": "192.168.0.1"
+# }
+
+# PUT  http://localhost:3000/url-access/1
+# Content-Type: application/json
+
+# {
+#     "accessDate": "01-01-1999",
+#     "ip": "192.168.02",
+#    "clicks": 0
+# }
+
+# PATCH  http://localhost:3000/url-access/click/1
+
+
+# DELETE   http://localhost:3000/url-access/1
+
+

@@ -13,7 +13,9 @@ export class UserService {
 
   async create(user: UserCreateData) {
     const newUser = this.userRepository.create(user);
-    return this.userRepository.save(newUser);
+    const createdUser = await this.userRepository.save(newUser);
+    const { password, ...userWithoutPassword } = createdUser;
+    return userWithoutPassword;
   }
 
   async update(id: number, data: UserUpdateData) {
@@ -25,14 +27,20 @@ export class UserService {
   }
 
   async get(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+    return this.userRepository.findOne({
+      where: { id },
+      select: { password: false },
+    });
   }
 
   async getByEmail(email: string) {
-    return this.userRepository.findOne({ where: { email } });
+    return this.userRepository.findOne({
+      where: { email },
+      select: { password: false },
+    });
   }
 
   async getAll() {
-    return this.userRepository.find();
+    return this.userRepository.find({ select: { password: false } });
   }
 }

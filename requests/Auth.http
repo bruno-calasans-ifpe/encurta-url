@@ -1,0 +1,24 @@
+
+
+# POST  http://localhost:3000/auth/register
+# Content-Type: application/json
+
+# {
+#   "name": "Marcos Castro",
+#   "email": "marcos@gmail.com",
+#   "password": "1234131"
+# }
+
+
+POST  http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "email": "marcos@gmail.com",
+  "password": "1234131"
+}
+
+# GET  http://localhost:3000/protected
+# Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyIiwiZW1haWwiOiJtYXJjb3NAZ21haWwuY29tIiwiaWF0IjoxNzM4ODY3Njc0LCJleHAiOjE3Mzg4NzEyNzR9.6JoX4VbLhTp1EJ7-I2J7C-4U-DNbpQSe4rU6wXa8EE8
+
+# GET  http://localhost:3000/public

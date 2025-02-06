@@ -18,7 +18,6 @@ export class UrlService {
 
   async create(data: UrlCreateData) {
     const newUrl = this.urlRepository.create(data);
-
     return this.urlRepository.save(newUrl);
   }
 
@@ -33,6 +32,7 @@ export class UrlService {
   async get(id: number) {
     return this.urlRepository.findOne({
       where: { id },
+      relations: { user: false },
     });
   }
 

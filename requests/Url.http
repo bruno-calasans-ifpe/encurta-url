@@ -9,16 +9,18 @@
 
 # {
 #   "redirectUrl": "https://localhost:8000/",
-#   "fullUrl": "https://github.com/oculus42/short-uuid"
+#   "fullUrl": "https://github.com/oculus42/short-uuid",
+#   "user_id": 2
 # }
 
-# PUT  http://localhost:3000/url/1
-# Content-Type: application/json
 
-# {
-#     "redirectUrl": "https://localhost:5000/",
-#     "fullUrl": "https://github.com/oculus42/short-2131"
-# }
+PUT  http://localhost:3000/url/2
+Content-Type: application/json
+
+{
+    "redirectUrl": "https://localhost:5000/",
+    "fullUrl": "https://github.com/oculus42/short-2131"
+}
 
 
 # DELETE   http://localhost:3000/url/1

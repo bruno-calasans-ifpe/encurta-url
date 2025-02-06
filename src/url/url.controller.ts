@@ -12,10 +12,15 @@ import { UrlCreateData, UrlUpdateData } from './url.dto';
 import { InternalServerError } from 'src/errors/InternalServerErrorError';
 import { NotFoundError } from 'src/errors/NotFoundError';
 import { NotModifiedError } from 'src/errors/NotModifiedError';
+import { UserService } from 'src/user/user.service';
+import { Url } from './url.entity';
 
 @Controller('url')
 export class UrlController {
-  constructor(private readonly urlService: UrlService) {}
+  constructor(
+    private readonly urlService: UrlService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get()
   getAllUrls() {
@@ -39,8 +44,17 @@ export class UrlController {
 
   @Post()
   async createUrl(@Body() data: UrlCreateData) {
-    data.shortUrl = this.urlService.generateShortUrl(data.redirectUrl);
-    const createdUrl = await this.urlService.create(data);
+    // Verifica se o user existe
+    const foundUser = await this.userService.get(+data.user_id);
+    if (!foundUser) throw new NotFoundError('Usuário não encontrado');
+
+    const dataToCreateUrl = {
+      ...data,
+      shortUrl: this.urlService.generateShortUrl(data.redirectUrl),
+      user: foundUser,
+    };
+
+    const createdUrl = await this.urlService.create(dataToCreateUrl);
 
     return {
       message: 'URL criada com sucesso',
@@ -56,28 +70,33 @@ export class UrlController {
     const foundUrl = await this.urlService.get(+id);
     if (!foundUrl) throw new NotFoundError('Url não encontrado');
 
-    // Atualiza url
+    // Verifica se o usuário existe
+    if (data.user_id) {
+      const foundUser = await this.userService.get(data.user_id);
+      if (!foundUser) throw new NotFoundError('Usuário não encontrado');
+      foundUrl.user = foundUser;
+    }
+
+    // Atualiza a url
     if (data.fullUrl || data.redirectUrl) {
-      data.shortUrl = this.urlService.generateShortUrl(
+      foundUrl.shortUrl = this.urlService.generateShortUrl(
         data.redirectUrl || foundUrl.redirectUrl,
       );
     }
 
-    foundUrl.fullUrl = data.fullUrl || foundUrl.fullUrl;
-    foundUrl.redirectUrl = data.redirectUrl || foundUrl.redirectUrl;
-
-    const result = await this.urlService.update(+id, data);
+    // Atualiza url
+    const result = await this.urlService.update(+id, foundUrl);
 
     // Verifica se algo mudou depois de atualizar o url
     if (result.affected === 0) {
-      throw new NotModifiedError('URL não atualizado');
+      throw new NotModifiedError('URL não atualizada');
     }
 
-    console.log(data);
+    const { user, ...url } = foundUrl;
 
     return {
       message: 'URL atualizado com sucesso',
-      url: { ...foundUrl, ...data },
+      url,
     };
   }
 

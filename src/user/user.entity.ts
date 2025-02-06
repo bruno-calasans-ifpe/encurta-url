@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Url } from 'src/url/url.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class User {
@@ -13,4 +14,10 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Url, (url) => url.user, {
+    cascade: true,
+    eager: false,
+  })
+  urls: Url[];
 }

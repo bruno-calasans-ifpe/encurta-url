@@ -1,0 +1,36 @@
+
+# GET http://localhost:3000/url
+
+
+# GET http://localhost:3000/uel/1
+
+# POST  http://localhost:3000/url
+# Content-Type: application/json
+
+# {
+#   "redirectUrl": "https://localhost:8000/",
+#   "fullUrl": "https://github.com/oculus42/short-uuid"
+# }
+
+# PUT  http://localhost:3000/url/1
+# Content-Type: application/json
+
+# {
+#     "redirectUrl": "https://localhost:5000/",
+#     "fullUrl": "https://github.com/oculus42/short-2131"
+# }
+
+
+# DELETE   http://localhost:3000/url/1
+
+# {
+#   "message": "URL atualizado com sucesso",
+#   "url": {
+#     "id": 1,
+#     "fullUrl": "https://github.com/oculus42/short-uuid",
+#     "shortUrl": "https://localhost:3000/fH9xm4D3x1HtjUv39qzWbj",
+#     "redirectUrl": "https://localhost:3000/"
+#   }
+# }
+
+

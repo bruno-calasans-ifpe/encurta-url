@@ -1,0 +1,26 @@
+
+# GET http://localhost:3000/user
+
+
+# GET http://localhost:3000/user/1
+
+# POST  http://localhost:3000/user
+# Content-Type: application/json
+
+# {
+#   "name": "Marcos Castro",
+#   "password": "1234131",
+#   "email": "marcos_gayzudo@email.com"
+# }
+
+# PUT  http://localhost:3000/user/1
+# Content-Type: application/json
+
+# {
+#     "name": "Marcos Castrado"
+# }
+
+
+# DELETE   http://localhost:3000/user/1
+
+

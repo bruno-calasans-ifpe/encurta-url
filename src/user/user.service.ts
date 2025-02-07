@@ -2,19 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { UserCreateData, UserUpdateData } from './user.dto';
+import { CreateUserData, UserUpdateData } from './user.dto';
 
 @Injectable()
 export class UserService {
+  
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
 
-  async create(user: UserCreateData) {
-    const newUser = this.userRepository.create(user);
+  async create(data: CreateUserData) {
+    const newUser = this.userRepository.create(data);
     const createdUser = await this.userRepository.save(newUser);
+
+    // Remove senha do objeto usuário
     const { password, ...userWithoutPassword } = createdUser;
+
     return userWithoutPassword;
   }
 

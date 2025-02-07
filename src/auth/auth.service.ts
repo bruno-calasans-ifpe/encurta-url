@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-const bcrypt = require('bcryptjs')
 import { UserService } from 'src/user/user.service';
 import { JWTPayload, LoginCredentials } from './auth.dto';
+const bcrypt = require('bcryptjs');
 
 @Injectable()
 export class AuthService {
-  // Adiciona os serviços de autenticação
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
@@ -25,7 +24,7 @@ export class AuthService {
     return foundUser;
   }
 
-  // Cria access token e refresh token
+  // Cria access token e refresh token (não ainda)
   async createToken(payload: JWTPayload) {
     return {
       access_token: this.jwtService.sign(payload),

@@ -1,10 +1,9 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserCreateData } from 'src/user/user.dto';
+import { CreateUserBodyData } from 'src/user/user.dto';
 import { ForbiddenError } from 'src/errors/ForbiddenError';
 import { LoginCredentials } from './auth.dto';
 import { UserService } from 'src/user/user.service';
-import { InternalServerError } from 'src/errors/InternalServerErrorError';
 import { ConflictError } from 'src/errors/ConflictError';
 
 @Controller('auth')
@@ -30,7 +29,7 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() data: UserCreateData) {
+  async register(@Body() data: CreateUserBodyData) {
     // Verifica se o email não está em uso
     const foundEmail = await this.userService.getByEmail(data.email);
     if (foundEmail) throw new ConflictError('Email já está em uso');

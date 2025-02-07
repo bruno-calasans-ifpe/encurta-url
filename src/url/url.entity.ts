@@ -1,3 +1,4 @@
+import { UrlAccess } from 'src/url-access/url-access.entity';
 import { User } from 'src/user/user.entity';
 import {
   Entity,
@@ -5,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -28,4 +30,10 @@ export class Url {
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToMany(() => UrlAccess, (urlAccess) => urlAccess.url, {
+    cascade: true,
+    eager: false,
+  })
+  accesses: UrlAccess[];
 }

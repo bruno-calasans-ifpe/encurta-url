@@ -8,13 +8,15 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UrlService } from './url.service';
-import { UrlCreateData, UrlUpdateData } from './url.dto';
+import { CreateUrlBodyData, CreateUrlData, UpdateUrlBodyData } from './url.dto';
 import { InternalServerError } from 'src/errors/InternalServerErrorError';
 import { NotFoundError } from 'src/errors/NotFoundError';
 import { NotModifiedError } from 'src/errors/NotModifiedError';
 import { UserService } from 'src/user/user.service';
-import { Url } from './url.entity';
 
+type Params = {
+  id: string;
+};
 @Controller('url')
 export class UrlController {
   constructor(
@@ -32,7 +34,7 @@ export class UrlController {
   }
 
   @Get(':id')
-  async getUrl(@Param() params: any) {
+  async getUrl(@Param() params: Params) {
     const id = params.id;
 
     // Verifica se o url existe
@@ -43,15 +45,17 @@ export class UrlController {
   }
 
   @Post()
-  async createUrl(@Body() data: UrlCreateData) {
+  async createUrl(@Body() data: CreateUrlBodyData) {
     // Verifica se o user existe
     const foundUser = await this.userService.get(+data.user_id);
     if (!foundUser) throw new NotFoundError('Usuário não encontrado');
 
+    // Dados para serem utilizados para criar uma url
     const dataToCreateUrl = {
       ...data,
       shortUrl: this.urlService.generateShortUrl(data.redirectUrl),
       user: foundUser,
+      accesses: [],
     };
 
     const createdUrl = await this.urlService.create(dataToCreateUrl);
@@ -63,7 +67,7 @@ export class UrlController {
   }
 
   @Put(':id')
-  async updateUrl(@Param() params: any, @Body() data: UrlUpdateData) {
+  async updateUrl(@Param() params: Params, @Body() data: UpdateUrlBodyData) {
     const id = params.id;
 
     // Verifica se o url existe
@@ -101,7 +105,7 @@ export class UrlController {
   }
 
   @Delete(':id')
-  async deleteUrl(@Param() params: any) {
+  async deleteUrl(@Param() params: Params) {
     const id = params.id;
 
     // Verifica se o url existe

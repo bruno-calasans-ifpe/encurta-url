@@ -1,5 +1,5 @@
 
-# GET http://localhost:3000/url-access
+GET http://localhost:3000/url-access
 
 
 # GET http://localhost:3000/url-access/1
@@ -9,7 +9,8 @@
 
 # {
 #   "accessDate": "01-01-1999",
-#   "ip": "192.168.0.1"
+#   "ip": "192.168.0.1",
+#   "url_id": 2
 # }
 
 # PUT  http://localhost:3000/url-access/1

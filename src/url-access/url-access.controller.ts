@@ -6,17 +6,27 @@ import {
   Param,
   Put,
   Delete,
-  Patch,
 } from '@nestjs/common';
 import { UrlAccessService } from './url-access.service';
-import { UrlAccessCreateData, UrlAccessUpdateData } from './url-access.dto';
+import {
+  CreateAccessUrlBodyData,
+  UpdateAccessUrlBodyData,
+} from './url-access.dto';
 import { InternalServerError } from 'src/errors/InternalServerErrorError';
 import { NotFoundError } from 'src/errors/NotFoundError';
 import { NotModifiedError } from 'src/errors/NotModifiedError';
+import { UrlService } from 'src/url/url.service';
+
+type Params = {
+  id: string;
+};
 
 @Controller('url-access')
 export class UrlAccessController {
-  constructor(private readonly urlAccessService: UrlAccessService) {}
+  constructor(
+    private readonly urlAccessService: UrlAccessService,
+    private readonly urlService: UrlService,
+  ) {}
 
   @Get()
   getAllUrlAccesss() {
@@ -28,19 +38,28 @@ export class UrlAccessController {
   }
 
   @Get(':id')
-  async getUrlAccess(@Param() params: any) {
+  async getUrlAccess(@Param() params: Params) {
     const id = params.id;
 
     // Verifica se o urlaccess existe
     const foundUrlAccess = await this.urlAccessService.get(+id);
-    if (!foundUrlAccess) throw new NotFoundError('UrlAccess não encontrado');
+    if (!foundUrlAccess)
+      throw new NotFoundError('Acesso de Url não encontrado');
 
     return { message: 'Acesso de Url encontrado', urlaccess: foundUrlAccess };
   }
 
   @Post()
-  async createUrlAccess(@Body() data: UrlAccessCreateData) {
-    const createdUrlAccess = await this.urlAccessService.create(data);
+  async createUrlAccess(@Body() data: CreateAccessUrlBodyData) {
+    // Tentar encontrar url
+    const foundUrl = await this.urlService.get(data.url_id);
+    if (!foundUrl) throw new NotFoundError('Url não encontrada');
+
+    // Cria Acesso para url
+    const createdUrlAccess = await this.urlAccessService.create({
+      ...data,
+      url: foundUrl,
+    });
 
     return {
       message: 'Acesso de Url criado com sucesso',
@@ -48,31 +67,10 @@ export class UrlAccessController {
     };
   }
 
-  @Patch('/click/:id')
-  async clickUrl(@Param() params: any) {
-    const id = params.id;
-
-    // Verifica se o urlaccess existe
-    const foundUrlAccess = await this.urlAccessService.get(+id);
-    if (!foundUrlAccess)
-      throw new NotFoundError('Acesso de Url não encontrada');
-
-    // Aumenta o número de clicks em
-    foundUrlAccess.clicks++;
-
-    // Atualiza acesso da url
-    await this.urlAccessService.update(+id, foundUrlAccess);
-
-    return {
-      message: 'Acesso de Url clicada com sucesso',
-      urlaccess: foundUrlAccess,
-    };
-  }
-
   @Put(':id')
   async updateUrlAccess(
-    @Body() data: UrlAccessUpdateData,
-    @Param() params: any,
+    @Body() data: UpdateAccessUrlBodyData,
+    @Param() params: Params,
   ) {
     const id = params.id;
 
@@ -94,7 +92,7 @@ export class UrlAccessController {
   }
 
   @Delete(':id')
-  async deleteUrlAccess(@Param() params: any) {
+  async deleteUrlAccess(@Param() params: Params) {
     const id = params.id;
 
     // Verifica se o urlaccess existe

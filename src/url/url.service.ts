@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Url } from './url.entity';
-import { UrlCreateData, UrlUpdateData } from './url.dto';
+import { CreateUrlData, UpdateUrlData } from './url.dto';
 const short = require('short-uuid');
 
 @Injectable()
@@ -16,12 +16,12 @@ export class UrlService {
     return redirectUrl.concat(short.generate().toString());
   }
 
-  async create(data: UrlCreateData) {
+  async create(data: CreateUrlData) {
     const newUrl = this.urlRepository.create(data);
     return this.urlRepository.save(newUrl);
   }
 
-  async update(id: number, data: UrlUpdateData) {
+  async update(id: number, data: UpdateUrlData) {
     return this.urlRepository.update(id, data);
   }
 
@@ -32,13 +32,7 @@ export class UrlService {
   async get(id: number) {
     return this.urlRepository.findOne({
       where: { id },
-      relations: { user: false },
-    });
-  }
-
-  async getByShortUrl(shortUrl: string) {
-    return this.urlRepository.findOne({
-      where: { shortUrl },
+      relations: { user: false, accesses: true },
     });
   }
 

@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Url } from 'src/url/url.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity()
 export class UrlAccess {
@@ -11,6 +18,11 @@ export class UrlAccess {
   @Column()
   ip: string;
 
-  @Column({ default: 1 })
-  clicks: number;
+  @ManyToOne(() => Url, (url) => url.accesses, {
+    nullable: false,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'url_id' })
+  url: Url;
 }

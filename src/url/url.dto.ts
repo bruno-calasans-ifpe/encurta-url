@@ -1,9 +1,14 @@
 import { OmitId } from 'src/types/common.type';
 import { Url } from './url.entity';
 
-export type UrlCreateData = {
+export type CreateUrlBodyData = {
   fullUrl: string;
   redirectUrl: string;
   user_id: number;
 };
-export type UrlUpdateData = Partial<UrlCreateData>;
+
+export type UpdateUrlBodyData = Partial<CreateUrlBodyData>;
+
+export type CreateUrlData = OmitId<Url>;
+
+export type UpdateUrlData = Partial<CreateUrlData>;

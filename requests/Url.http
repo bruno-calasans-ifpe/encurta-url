@@ -2,7 +2,7 @@
 # GET http://localhost:3000/url
 
 
-# GET http://localhost:3000/uel/1
+GET http://localhost:3000/url/2
 
 # POST  http://localhost:3000/url
 # Content-Type: application/json
@@ -14,13 +14,13 @@
 # }
 
 
-PUT  http://localhost:3000/url/2
-Content-Type: application/json
+# PUT  http://localhost:3000/url/2
+# Content-Type: application/json
 
-{
-    "redirectUrl": "https://localhost:5000/",
-    "fullUrl": "https://github.com/oculus42/short-2131"
-}
+# {
+#     "redirectUrl": "https://localhost:5000/",
+#     "fullUrl": "https://github.com/oculus42/short-2131"
+# }
 
 
 # DELETE   http://localhost:3000/url/1

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UrlAccess } from './url-access.entity';
-import { UrlAccessCreateData, UrlAccessUpdateData } from './url-access.dto';
+import { CreateAccessUrlData, UpdateAccessUrlData } from './url-access.dto';
 
 @Injectable()
 export class UrlAccessService {
@@ -11,12 +11,12 @@ export class UrlAccessService {
     private urlaccessRepository: Repository<UrlAccess>,
   ) {}
 
-  async create(urlAccess: UrlAccessCreateData) {
-    const newUrlAccess = this.urlaccessRepository.create(urlAccess);
+  async create(data: CreateAccessUrlData) {
+    const newUrlAccess = this.urlaccessRepository.create(data);
     return this.urlaccessRepository.save(newUrlAccess);
   }
 
-  async update(id: number, data: UrlAccessUpdateData) {
+  async update(id: number, data: UpdateAccessUrlData) {
     return this.urlaccessRepository.update(id, data);
   }
 
@@ -27,10 +27,11 @@ export class UrlAccessService {
   async get(id: number) {
     return this.urlaccessRepository.findOne({
       where: { id },
+      relations: { url: true },
     });
   }
 
   async getAll() {
-    return this.urlaccessRepository.find();
+    return this.urlaccessRepository.find({ relations: { url: true } });
   }
 }

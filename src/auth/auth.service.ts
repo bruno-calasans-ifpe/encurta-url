@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
@@ -33,7 +38,7 @@ export class AuthService {
 
   // Encripta senha
   async hashPassword(password: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = (await bcrypt.hash(password, 10)) as string;
     return hashedPassword;
   }
 

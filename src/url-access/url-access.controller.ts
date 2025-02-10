@@ -1,18 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Controller,
   Post,
   Body,
   Get,
   Param,
-  Put,
   Delete,
   Req,
 } from '@nestjs/common';
 import { UrlAccessService } from './url-access.service';
-import {
-  CreateAccessUrlBodyData,
-  UpdateAccessUrlBodyData,
-} from './url-access.dto';
+import { CreateAccessUrlBodyData } from './url-access.dto';
 import { InternalServerError } from 'src/errors/InternalServerErrorError';
 import { NotFoundError } from 'src/errors/NotFoundError';
 import { NotModifiedError } from 'src/errors/NotModifiedError';

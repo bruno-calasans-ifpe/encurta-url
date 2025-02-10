@@ -6,7 +6,6 @@ import { JWTPayload, LoginCredentials } from './auth.dto';
 import { UserService } from 'src/user/user.service';
 import { ConflictError } from 'src/errors/ConflictError';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { NotFoundError } from 'src/errors/NotFoundError';
 import { UnauthorizedError } from 'src/errors/UnauthorizedError';
 
 @Controller('auth')

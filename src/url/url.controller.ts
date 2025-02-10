@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Controller,
   Post,
@@ -7,13 +8,17 @@ import {
   Put,
   Delete,
   Query,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UrlService } from './url.service';
-import { CreateUrlBodyData, CreateUrlData, UpdateUrlBodyData } from './url.dto';
+import { CreateUrlBodyData, UpdateUrlBodyData } from './url.dto';
 import { InternalServerError } from 'src/errors/InternalServerErrorError';
 import { NotFoundError } from 'src/errors/NotFoundError';
 import { NotModifiedError } from 'src/errors/NotModifiedError';
 import { UserService } from 'src/user/user.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JWTPayload } from 'src/auth/auth.dto';
 
 type Params = {
   id: string;
@@ -30,7 +35,7 @@ export class UrlController {
   getAllUrls() {
     try {
       return this.urlService.getAll();
-    } catch (error) {
+    } catch (error: unknown) {
       throw new InternalServerError('Erro pegar todos os URLs');
     }
   }
@@ -40,7 +45,7 @@ export class UrlController {
     @Param() { id }: Params,
     @Query('byShortUrl') byShortUrl: string,
   ) {
-    // Verifica se o url existe
+    // Verifica se o url existe pela URL curta
     if (byShortUrl) {
       const foundUrl = await this.urlService.getByShortUrl(id);
       if (!foundUrl) throw new NotFoundError('Url não encontrado');

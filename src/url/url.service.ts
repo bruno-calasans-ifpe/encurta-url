@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { Url } from './url.entity';
 import { CreateUrlData, UpdateUrlData } from './url.dto';
-const short = require('short-uuid');
+import ShortUniqueId from 'short-unique-id';
 
 @Injectable()
 export class UrlService {
@@ -13,8 +13,12 @@ export class UrlService {
   ) {}
 
   generateShortUrl(redirectUrl: string) {
-    const shortPath = '/' + short.generate().toString();
-    const url = new URL(shortPath, redirectUrl);
+    const shortUUID = new ShortUniqueId({
+      length: 6,
+    }).rnd();
+
+    //const shortPath = '/' + short.generate().toString();
+    const url = new URL(shortUUID, redirectUrl);
     return url.href;
   }
 
@@ -34,14 +38,14 @@ export class UrlService {
   async get(id: number) {
     return this.urlRepository.findOne({
       where: { id },
-      relations: { accesses: true },
+      relations: { user: true, accesses: true },
     });
   }
 
   async getByShortUrl(shortUrl: string) {
     return this.urlRepository.findOne({
       where: { shortUrl: Like(`%${shortUrl}%`) },
-      relations: { user: false, accesses: true },
+      relations: { user: true, accesses: true },
     });
   }
 

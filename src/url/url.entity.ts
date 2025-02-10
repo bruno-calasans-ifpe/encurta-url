@@ -17,7 +17,7 @@ export class Url {
   @Column()
   fullUrl: string;
 
-  @Column()
+  @Column({ unique: true })
   shortUrl: string;
 
   @Column()

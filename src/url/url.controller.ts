@@ -99,13 +99,25 @@ export class UrlController {
       dataToUpdate.user = foundUser;
     }
 
-    // Atualiza a url
-    if (data.fullUrl || data.redirectUrl) {
+    // Atualiza apenas a URL completa
+    if (data.fullUrl) {
       dataToUpdate.fullUrl = data.fullUrl;
+    }
+
+    // Atualiza a URL curta
+    if (data.redirectUrl) {
+      dataToUpdate.redirectUrl = data.redirectUrl;
       dataToUpdate.shortUrl = this.urlService.generateShortUrl(
         data.redirectUrl || foundUrl.redirectUrl,
       );
     }
+
+    // if (data.fullUrl || data.redirectUrl) {
+    //   dataToUpdate.fullUrl = data.fullUrl;
+    //   dataToUpdate.shortUrl = this.urlService.generateShortUrl(
+    //     data.redirectUrl || foundUrl.redirectUrl,
+    //   );
+    // }
 
     // Atualiza url
     const result = await this.urlService.update(+id, dataToUpdate);

@@ -13,7 +13,9 @@ export class UrlService {
   ) {}
 
   generateShortUrl(redirectUrl: string) {
-    return redirectUrl.concat(short.generate().toString());
+    const shortPath = '/' + short.generate().toString();
+    const url = new URL(shortPath, redirectUrl);
+    return url.href;
   }
 
   async create(data: CreateUrlData) {

@@ -63,11 +63,10 @@ export class UrlAccessController {
 
     // Cria Acesso para url
     const lookup = geoIp.lookup(req.ip || 'localhost');
-    console.log(lookup);
 
     const createdUrlAccess = await this.urlAccessService.create({
       url: foundUrl,
-      accessDate: new Date().toISOString(),
+      accessDate: new Date().toLocaleDateString('pt-Br'),
       ip: req.ip || 'localhost',
       location: lookup?.city || 'Desconhecido',
     });

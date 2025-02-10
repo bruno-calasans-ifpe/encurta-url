@@ -13,10 +13,13 @@ export class UrlAccess {
   id: number;
 
   @Column()
-  accessDate: Date;
+  accessDate: string;
 
   @Column()
   ip: string;
+
+  @Column()
+  location: string;
 
   @ManyToOne(() => Url, (url) => url.accesses, {
     nullable: false,

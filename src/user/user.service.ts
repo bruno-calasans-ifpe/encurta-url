@@ -6,7 +6,6 @@ import { CreateUserData, UserUpdateData } from './user.dto';
 
 @Injectable()
 export class UserService {
-  
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -30,10 +29,11 @@ export class UserService {
     return this.userRepository.delete(id);
   }
 
-  async get(id: number) {
+  async get(id: number, sendUrls?: boolean) {
     return this.userRepository.findOne({
       where: { id },
       select: { password: false },
+      relations: { urls: sendUrls },
     });
   }
 

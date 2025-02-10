@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserBodyData, UpdateCreateUserBodyData } from './user.dto';
@@ -32,11 +33,11 @@ export class UserController {
   }
 
   @Get(':id')
-  async getUser(@Param() params: Params) {
+  async getUser(@Param() params: Params, @Query('sendUrls') sendUrls: string) {
     const id = params.id;
 
     // Verifica se o user existe
-    const foundUser = await this.userService.get(+id);
+    const foundUser = await this.userService.get(+id, !!sendUrls);
     if (!foundUser) throw new NotFoundError('User não encontrado');
 
     return { message: 'Usuário encontrado', user: foundUser };

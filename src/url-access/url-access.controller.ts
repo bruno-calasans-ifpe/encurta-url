@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { UrlAccessService } from './url-access.service';
 import {
@@ -16,6 +17,8 @@ import { InternalServerError } from 'src/errors/InternalServerErrorError';
 import { NotFoundError } from 'src/errors/NotFoundError';
 import { NotModifiedError } from 'src/errors/NotModifiedError';
 import { UrlService } from 'src/url/url.service';
+import { Request } from 'express';
+const geoIp = require('geoip-lite');
 
 type Params = {
   id: string;
@@ -50,15 +53,23 @@ export class UrlAccessController {
   }
 
   @Post()
-  async createUrlAccess(@Body() data: CreateAccessUrlBodyData) {
+  async createUrlAccess(
+    @Req() req: Request,
+    @Body() { url_id }: CreateAccessUrlBodyData,
+  ) {
     // Tentar encontrar url
-    const foundUrl = await this.urlService.get(data.url_id);
+    const foundUrl = await this.urlService.get(url_id);
     if (!foundUrl) throw new NotFoundError('Url não encontrada');
 
     // Cria Acesso para url
+    const lookup = geoIp.lookup(req.ip || 'localhost');
+    console.log(lookup);
+
     const createdUrlAccess = await this.urlAccessService.create({
-      ...data,
       url: foundUrl,
+      accessDate: new Date().toISOString(),
+      ip: req.ip || 'localhost',
+      location: lookup?.city || 'Desconhecido',
     });
 
     return {
@@ -67,29 +78,29 @@ export class UrlAccessController {
     };
   }
 
-  @Put(':id')
-  async updateUrlAccess(
-    @Body() data: UpdateAccessUrlBodyData,
-    @Param() params: Params,
-  ) {
-    const id = params.id;
+  // @Put(':id')
+  // async updateUrlAccess(
+  //   @Body() data: UpdateAccessUrlBodyData,
+  //   @Param() params: Params,
+  // ) {
+  //   const id = params.id;
 
-    // Verifica se o urlaccess existe
-    const foundUrlAccess = await this.urlAccessService.get(+id);
-    if (!foundUrlAccess) throw new NotFoundError('UrlAccess não encontrado');
+  //   // Verifica se o urlaccess existe
+  //   const foundUrlAccess = await this.urlAccessService.get(+id);
+  //   if (!foundUrlAccess) throw new NotFoundError('UrlAccess não encontrado');
 
-    const result = await this.urlAccessService.update(+id, data);
+  //   const result = await this.urlAccessService.update(+id, {});
 
-    // Verifica se algo mudou depois de atualizar o urlaccess
-    if (result.affected === 0) {
-      throw new NotModifiedError('Acesso de Url não atualizado');
-    }
+  //   // Verifica se algo mudou depois de atualizar o urlaccess
+  //   if (result.affected === 0) {
+  //     throw new NotModifiedError('Acesso de Url não atualizado');
+  //   }
 
-    return {
-      message: 'Acesso de Url atualizado com sucesso',
-      urlaccess: { ...foundUrlAccess, ...data },
-    };
-  }
+  //   return {
+  //     message: 'Acesso de Url atualizado com sucesso',
+  //     urlaccess: { ...foundUrlAccess, ...data },
+  //   };
+  // }
 
   @Delete(':id')
   async deleteUrlAccess(@Param() params: Params) {

@@ -1,10 +1,13 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserBodyData } from 'src/user/user.dto';
 import { ForbiddenError } from 'src/errors/ForbiddenError';
-import { LoginCredentials } from './auth.dto';
+import { JWTPayload, LoginCredentials } from './auth.dto';
 import { UserService } from 'src/user/user.service';
 import { ConflictError } from 'src/errors/ConflictError';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { NotFoundError } from 'src/errors/NotFoundError';
+import { UnauthorizedError } from 'src/errors/UnauthorizedError';
 
 @Controller('auth')
 export class AuthController {
@@ -20,12 +23,12 @@ export class AuthController {
     if (!validUser) throw new ForbiddenError('Crendenciais inválidas');
 
     // Cria token
-    const token = await this.authService.createToken({
-      userId: validUser.id.toString(),
+    const { accessToken } = await this.authService.createToken({
+      userId: validUser.id,
       email: validUser.email,
     });
 
-    return token;
+    return { accessToken, user: validUser };
   }
 
   @Post('register')
@@ -41,6 +44,20 @@ export class AuthController {
     const user = await this.userService.create(data);
 
     // Retorna usuário criado
-    return user;
+    return { user };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('check')
+  async checkAuth(@Req() req: { user: JWTPayload; ip: string }) {
+    const { userId, email } = req.user;
+
+    const foundUser = await this.userService.get(userId);
+    if (!foundUser) throw new UnauthorizedError('Usuário não encontrado');
+
+    if (foundUser.email !== email)
+      throw new UnauthorizedError('Token inválido');
+
+    return { user: foundUser };
   }
 }

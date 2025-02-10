@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UrlService } from './url.service';
 import { CreateUrlBodyData, CreateUrlData, UpdateUrlBodyData } from './url.dto';
@@ -16,6 +17,7 @@ import { UserService } from 'src/user/user.service';
 
 type Params = {
   id: string;
+  short_url: string;
 };
 @Controller('url')
 export class UrlController {
@@ -34,14 +36,29 @@ export class UrlController {
   }
 
   @Get(':id')
-  async getUrl(@Param() params: Params) {
-    const id = params.id;
-
+  async getUrl(
+    @Param() { id }: Params,
+    @Query('byShortUrl') byShortUrl: string,
+  ) {
     // Verifica se o url existe
+    if (byShortUrl) {
+      const foundUrl = await this.urlService.getByShortUrl(id);
+      if (!foundUrl) throw new NotFoundError('Url não encontrado');
+      return { message: 'URL encontrado', url: foundUrl };
+    }
+
     const foundUrl = await this.urlService.get(+id);
     if (!foundUrl) throw new NotFoundError('Url não encontrado');
-
     return { message: 'URL encontrado', url: foundUrl };
+  }
+
+  @Get('/user/:id')
+  async getUserUrl(@Param() { id }: Params) {
+    const foundUser = await this.userService.get(+id);
+    if (!foundUser) throw new NotFoundError('Usuário não encontrado');
+
+    const foundUrls = await this.urlService.getUserUrls(+id);
+    return { message: 'URL encontrado', urls: foundUrls };
   }
 
   @Post()
@@ -69,6 +86,7 @@ export class UrlController {
   @Put(':id')
   async updateUrl(@Param() params: Params, @Body() data: UpdateUrlBodyData) {
     const id = params.id;
+    const dataToUpdate: { [key in string]: any } = {};
 
     // Verifica se o url existe
     const foundUrl = await this.urlService.get(+id);
@@ -78,23 +96,26 @@ export class UrlController {
     if (data.user_id) {
       const foundUser = await this.userService.get(data.user_id);
       if (!foundUser) throw new NotFoundError('Usuário não encontrado');
-      foundUrl.user = foundUser;
+      dataToUpdate.user = foundUser;
     }
 
     // Atualiza a url
     if (data.fullUrl || data.redirectUrl) {
-      foundUrl.shortUrl = this.urlService.generateShortUrl(
+      dataToUpdate.fullUrl = data.fullUrl;
+      dataToUpdate.shortUrl = this.urlService.generateShortUrl(
         data.redirectUrl || foundUrl.redirectUrl,
       );
     }
 
     // Atualiza url
-    const result = await this.urlService.update(+id, foundUrl);
+    const result = await this.urlService.update(+id, dataToUpdate);
 
     // Verifica se algo mudou depois de atualizar o url
     if (result.affected === 0) {
       throw new NotModifiedError('URL não atualizada');
     }
+
+    console.log(dataToUpdate);
 
     const { user, ...url } = foundUrl;
 

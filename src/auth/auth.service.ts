@@ -27,7 +27,7 @@ export class AuthService {
   // Cria access token e refresh token (não ainda)
   async createToken(payload: JWTPayload) {
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
 
@@ -35,5 +35,10 @@ export class AuthService {
   async hashPassword(password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
     return hashedPassword;
+  }
+
+  // Cria access token e refresh token (não ainda)
+  async checkToken(token: string) {
+    return this.jwtService.verify<JWTPayload>(token);
   }
 }

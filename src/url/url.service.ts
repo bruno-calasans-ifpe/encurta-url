@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Url } from './url.entity';
 import { CreateUrlData, UpdateUrlData } from './url.dto';
 const short = require('short-uuid');
@@ -32,7 +32,20 @@ export class UrlService {
   async get(id: number) {
     return this.urlRepository.findOne({
       where: { id },
+      relations: { accesses: true },
+    });
+  }
+
+  async getByShortUrl(shortUrl: string) {
+    return this.urlRepository.findOne({
+      where: { shortUrl: Like(`%${shortUrl}%`) },
       relations: { user: false, accesses: true },
+    });
+  }
+
+  async getUserUrls(userId: number) {
+    return this.urlRepository.find({
+      where: { user: { id: userId } },
     });
   }
 

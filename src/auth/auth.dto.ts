@@ -1,6 +1,10 @@
 export type LoginCredentials = { email: string; password: string };
 
 export type JWTPayload = {
-  userId: string;
+  userId: number;
   email: string;
+};
+
+export type CheckAuthBodyData = {
+  accessToken: string;
 };
